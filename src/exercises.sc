@@ -132,7 +132,7 @@ def fizzBuzz(a: String, b: String, c: Int): Unit = {
 }
 
 def fizzy(a: String, b: String, i: Int) = {
-  if (i % 3 == 0 && i %5 == 0) {
+  if (i % 3 == 0 && i % 5 == 0) {
     println(a.concat(b))
   } else if (i % 3 == 0) {
     println(a)
