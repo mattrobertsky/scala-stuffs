@@ -80,35 +80,66 @@ def returnN(input: String, repeat: Int) = {
     println(input)
   }
 }
-
 returnN("Hi", 3)
 
-def stringRepeat(input: String, repeat: Int) = {
+def returnNRecursive(input: String, repeat: Int) {
+  if(repeat > 1) {
+    returnNRecursive(input, repeat -1)
+  }
+  println(input)
+}
+returnNRecursive("Hi Recursion", 3)
+
+def stringRepeat(input: String, repeat: Int): Unit = {
   for (i <- 0 until repeat) print(input)
 }
 
+stringRepeat("one line ", 3)
+
+def stringRepeatRecursive(input: String, repeat: Int) {
+  if (repeat > 1) {
+    stringRepeatRecursive(input, repeat -1)
+  }
+  print(input)
+}
+
+stringRepeatRecursive("one line recursive ", 3)
 
 
-def rectangularPrint(input: String, repeat: Int) = {
+def rectangularPrint(input: String, repeat: Int) {
   for (i <- 0 until repeat) {
-    var foo = stringRepeat(input, repeat)
-    println(foo)
+    stringRepeat(input, repeat)
+    print("\n")
   }
 }
 
-rectangularPrint("Y", 4)
+rectangularPrint("H", 4)
+
+def rectangularPrintRecursive(input: String, rows: Int, cols: Int) {
+  if(rows > 1) {
+    rectangularPrintRecursive(input, rows - 1, cols)
+  }
+  stringRepeatRecursive(input, cols)
+  println()
+}
+
+rectangularPrintRecursive("X", 5, 5)
 
 def fizzBuzz(a: String, b: String, c: Int): Unit = {
   for(i <- 1 to c) {
-    if (i % 3 == 0 && i %5 == 0) {
-      println(a.concat(b))
-    } else if (i % 3 == 0) {
-      println(a)
-    } else if (i % 5 ==0) {
-      println(b)
-    } else {
-      println(i)
-    }
+    fizzy(a, b, i)
+  }
+}
+
+def fizzy(a: String, b: String, i: Int) = {
+  if (i % 3 == 0 && i %5 == 0) {
+    println(a.concat(b))
+  } else if (i % 3 == 0) {
+    println(a)
+  } else if (i % 5 ==0) {
+    println(b)
+  } else {
+    println(i)
   }
 }
 
@@ -119,15 +150,7 @@ def fizzBuzzRecursive(a: String, b: String, c: Int): Unit = {
   if (c > 1) {
     fizzBuzzRecursive(a, b, c - 1)
   }
-  if (c % 3 == 0 && c %5 == 0) {
-    println(a.concat(b))
-  } else if (c % 3 == 0) {
-    println(a)
-  } else if (c % 5 ==0) {
-    println(b)
-  } else {
-    println(c)
-  }
+  fizzy(a, b, c)
 }
 
 fizzBuzzRecursive("fizz", "buzz", 15)
