@@ -4,7 +4,7 @@ def blackjack(a: Int, b: Int): Int = (a,b) match {
   case _ => 0
 }
 
-// TODO - revisit
+// TODO - revisit.. would be nice to try a .map approach
 
 blackjack(18,21)
 blackjack(20, 18)
