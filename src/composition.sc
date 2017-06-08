@@ -1,8 +1,3 @@
-// quantum entanglement
-// closure ??
-// referential transparency
-// pure functions have no IO as it's an effect NOT a result, it is really a form of state
-
 /*
  N.B. composition only handles single argument functions
  Also worth pointing out that the return type from each function needs to match the arg type of
@@ -26,4 +21,3 @@ val funcPrequel = (arg: String) => {
 }
 
 (funcOne andThen funcTwo andThen funcThree compose funcPrequel)("foo")
-

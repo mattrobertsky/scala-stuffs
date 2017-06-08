@@ -65,8 +65,10 @@ def myFunc(any: Any) = {
   }
 }
 
+
+
 // the point here is that you can call any of the generic methods on T but with Any you need
-// to figure out the type first
+  // to figure out the type first
 def myOtherFunc[T](any: T) = {
   any match {
     case a: T => a + "a"
@@ -87,5 +89,8 @@ case (a,b,c) =>
 case (a,b,c,d) =>
  */
 
-
+// quantum entanglement
+// closure ??
+// referential transparency
+// pure functions have no IO as it's an effect NOT a result, it is really a form of state
 
