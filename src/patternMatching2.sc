@@ -1,5 +1,3 @@
-import java.util
-
 def switchAroo(numbers: Any): Any = numbers match {
   case list: List[Int] if list.length > 2 => list.take(2).reverse
   case list: List[Int] => list.reverse
