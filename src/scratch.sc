@@ -88,8 +88,4 @@ case (a,b,c,d) =>
  */
 
 
-// quantum entanglement
-// closure ??
-// referential transparency
-// pure functions have no IO as it's an effect NOT a result, it is really a form of state
 
