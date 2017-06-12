@@ -8,7 +8,5 @@ var idsThree = java.util.TimeZone.getAvailableIDs().map(value => value.split("/"
 
 idsThree == ids
 
-var foo = "one/two/three"
-foo.split("/")(1)
-foo.split("/").last
+var foo = "one/two".split("/").last
 

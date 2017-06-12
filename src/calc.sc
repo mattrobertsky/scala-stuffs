@@ -9,9 +9,9 @@ def calculator(num: Int*) : String = {
 
 calculator(1,2,3,4)
 
-// wanted to create anon functions for each operator but although that works at REPL it doesn't work here e.g
-val d = (a:Int, b: Int) => s"$a $d $b = ${a / b}"
-val / = (a:Int, b: Int) => s"$a $d $b = ${a / b}" // this errors if you call it
+// wanted to create anon functions for each operator but although that works at REPL it doesn't work in Scala worksheets e.g
+//val d = (a:Int, b: Int) => s"$a $d $b = ${a / b}"
+//val / = (a:Int, b: Int) => s"$a $d $b = ${a / b}" // this errors if you call it
 
 //Calculator ADT Attempt
 /*
