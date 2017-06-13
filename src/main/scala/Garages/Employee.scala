@@ -9,3 +9,13 @@ class Employee(nino:String) extends Person {
 
 
 }
+
+object Employee {
+  object EmployeeFactory {
+    var index: Int = 0
+    def next(): Employee = {
+      index += 1
+      new Employee("E-".concat(index.toString))
+    }
+  }
+}
