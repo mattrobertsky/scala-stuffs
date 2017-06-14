@@ -1,7 +1,9 @@
   package Garages
 
   import scala.collection.mutable
+  import scala.collection.mutable.Map
   import scala.collection.mutable.ListBuffer
+  import scala.collection.mutable.Queue
   import scala.util.Random
 
   /**
@@ -11,8 +13,13 @@
 
     //var employees = scala.collection.mutable.Map[String, Employee]()
     //var customers = scala.collection.mutable.Map[String, Customer]()
-    var vehicleMap: scala.collection.mutable.Map[String, Vehicle] = scala.collection.mutable.Map[String, Vehicle]()
-    var employeeVehicleMap: scala.collection.mutable.Map[String, ListBuffer[Vehicle]] = scala.collection.mutable.Map[String, ListBuffer[Vehicle]]()
+    // TODO vehicleMap could maybe be a queue, there probably isn't a requirement to get by registration
+    var vehicleQueue: Queue[Vehicle] = new Queue[Vehicle]()
+    var employeeVehicleQueue: Queue[Vehicle] = new mutable.Queue[Vehicle]()
+
+    var vehicleMap: Map[String, Vehicle] = Map[String, Vehicle]()
+    var employeeVehicleMap: Map[String, ListBuffer[Vehicle]] = Map[String, ListBuffer[Vehicle]]()
+
     var open: Boolean = false
     val workingHours: Double = 8
 
@@ -20,7 +27,7 @@
     def openGarage(): Unit = {
       open = true
       queueVehicles()
-      assignWork()
+      //assignWork()
     }
 
     private def assignWork(): Unit = {
@@ -28,8 +35,10 @@
         var hours = workingHours
         var vehicles = vehicleMap.values
         for (vehicle: Vehicle <- employeeVehicleMap(employee.id)) hours -= vehicle.getHoursToFix()
-        while (hours > 0) {
-          var vehicle = vehicles.head
+        while (employee.bookedHours < workingHours) {
+          //var vehicle = vehicles.head
+          var vehicle = vehicleQueue.dequeue()
+          employee.bookedHours += vehicle.getHoursToFix()
           if (employeeVehicleMap.contains(employee.id)) {
             employeeVehicleMap(employee.id) += vehicle
           } else {
@@ -42,6 +51,7 @@
       }
     }
 
+    // look at queue
     private def queueVehicles(): Unit = {
       var capacity = getDailyCapacity
       println(s"capacity is $capacity")
@@ -52,6 +62,7 @@
         val vehicle = Vehicle.BrokenVehicleQueue.next()
         vehicle.breakParts()
         addVehicle(vehicle)
+        vehicleQueue.+=:(vehicle)
         capacity -= vehicle.getHoursToFix()
       }
     }

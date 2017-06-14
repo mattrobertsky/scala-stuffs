@@ -5,6 +5,7 @@ package Garages
   */
 class Employee(nino:String) extends Person {
   val id: String  = nino
+  var bookedHours: Double = 0.0
   override def myToString: String = s"Employee (national insurance number: $nino"
 
 
