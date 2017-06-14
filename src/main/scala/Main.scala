@@ -28,6 +28,12 @@ object Main {
     }
     val garage = new Garage(employees)
     garage.openGarage()
+    //println(garage.vehicleQueue.mkString("\n"))
+
+    println(garage.employeeVehicleMap.map(_.toString()).mkString("\n"))
+
+
+
 ////    garage.vehicles = vehicleMap
 //    garage.getContents()
     //garage.removeVehiclesByType(new Bike("DONE123", new Customer("CUL8R")))

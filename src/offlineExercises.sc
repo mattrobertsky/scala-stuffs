@@ -19,28 +19,31 @@ def evenlySpaced(a: Int, b: Int, c: Int): Boolean = {
 evenlySpaced(4, 6, 3)
 
 def fibonacci(n: Int): Int = {
-  println(s"n is $n")
-  if (n >= 2) {
-    fibonacci(n -1) + fibonacci(n-2)
-  }
-  0
+  // adds the previous two numbers in a sequence that starts 0, 1 until it reaches the nth number
+  // in the sequence
+  // 0 = 0, 1 = 1, 2 = 1, 3 = 2, 4 = 3, 5 = 5, 6 = 8, 7 = 13 etc.
 
+  if (n == 0 || n == 1) {
+    n
+  } else {
+    fibonacci(n - 1) + fibonacci(n - 2)
+  }
 }
 fibonacci(5)
 
 def bunnyEars(b: Int): Int = {
-  def bar(b: Int, c: Int) {
-    if (b>0) {
-      bar((b-1), (c+2))
-    }
+  println(s"bunnies: $b")
+  // iterate bunnies returning two each time
 
+  if (b < 1 ) {
+    0
+  } else {
+    bunnyEars(b -1) * 2
   }
-  if (b > 0 ) {
-    bunnyEars(b - 1 )
-  }
-  2
 }
-bunnyEars(3)
+bunnyEars(5)
+
+0 * 2
 
 
 def nTwice (word: String, i: Int): String = {

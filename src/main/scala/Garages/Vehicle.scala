@@ -13,20 +13,31 @@ abstract class Vehicle extends ToStringAble {
   var working: Boolean
   val owner: Person
   val parts: List[Part] = Part.Factory.getParts()
+  var workDone:Double = 0
 
   def breakParts(): Unit = {
     // N.B. a for comprehension
     for (part: Part <- parts) part.broken = math.random() < 0.26
+    // look some recursion!
+    // check that some parts are broken as using random doesn't guarantee it
+    if (parts.filter(_.broken).isEmpty) {
+      breakParts()
+    }
   }
 
-  def partManifest() : String = {
+  def brokenPartManifest() : String = {
     var manifest: String = ""
-    for (part: Part <- parts) manifest += s" ${part.getClass.getName} broken: ${part.broken} hoursToFix ${part.hoursToFix}\n"
+    //for (part: Part <- parts) manifest += s" ${part.getClass.getName} broken: ${part.broken} hoursToFix ${part.hoursToFix}\n"
+    parts.filter(_.broken).foreach(part => manifest += s" ${part.getClass.getName} broken: ${part.broken} hoursToFix: ${part.hoursToFix} partCost: £${part.cost}\n")
     manifest
   }
 
   def getHoursToFix() : Double = {
-    parts.filter(_.broken).map(value => value.hoursToFix).sum
+    parts.filter(_.broken).map(value => value.hoursToFix).sum - workDone
+  }
+
+  def getCostOfPartsToFix() : Double = {
+    parts.filter(_.broken).map(value => value.cost).sum
   }
 
 }
