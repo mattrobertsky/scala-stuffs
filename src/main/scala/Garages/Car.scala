@@ -7,5 +7,5 @@ class Car (theReg: String, theOwner: Person) extends Vehicle {
   val registration: String = theReg
   val owner: Person = theOwner
   var working: Boolean = true
-  override def myToString: String = s"Car $registration. Owner: ${owner.id} Manifest: \n${this.brokenPartManifest()} \nTOTAL fixTime: ${this.getHoursToFix()}\n\n"
+  override def myToString: String = s"Car $registration owned by: ${owner.id} \nParts: \n${this.brokenPartManifest()} \n\n"
 }

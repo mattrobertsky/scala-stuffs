@@ -1,5 +1,7 @@
 
 
-val d = (a:Int, b: Int) => s"$a $d $b = ${a / b}"
 
-*(4,2)
+var i: Int = 8
+var t: Double = 2.5
+
+((i - t) * 60) % 60
