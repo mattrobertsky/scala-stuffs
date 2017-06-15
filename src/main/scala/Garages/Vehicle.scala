@@ -43,7 +43,7 @@ abstract class Vehicle extends ToStringAble {
 }
 object Vehicle {
 
-  object BrokenVehicleQueue {
+  object BrokenVehicleFactory {
     var index = 0
 
     def next(): Vehicle = {

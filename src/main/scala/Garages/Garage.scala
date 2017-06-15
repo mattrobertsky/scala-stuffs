@@ -11,8 +11,7 @@
   class Garage(employees: scala.collection.mutable.Map[String, Employee]) {
 
     var vehicleQueue: Queue[Vehicle] = new Queue[Vehicle]()
-    // TODO vehicleMap could be removed
-    var vehicleMap: Map[String, Vehicle] = Map[String, Vehicle]()
+
 
     var employeeVehicleMap: Map[String, Queue[Vehicle]] = Map[String, Queue[Vehicle]]().empty
 
@@ -26,10 +25,11 @@
 
     val fistDay: java.util.Date = Calendar.getInstance.getTime
 
-    def getTime(hour: Int, minute: Int): java.util.Date = {
+    private def getTime(hour: Int, minute: Int): java.util.Date = {
       val cal: Calendar = Calendar.getInstance()
       cal.set(Calendar.HOUR_OF_DAY, hour + openingHour)
       cal.set(Calendar.MINUTE, minute)
+      cal.set(Calendar.SECOND, 0)
       cal.add(Calendar.DAY_OF_YEAR, openingDay)
       cal.getTime
     }
@@ -38,49 +38,40 @@
       open = true
       queueVehicles()
       assignWork()
-      //for (q <- employeeVehicleMap.values) println(q.mkString(" "))
     }
 
+    // takes vehicles off the garage queue and gives them to an employee assuming they have enough hours free
     private def assignWork(): Unit = {
       for (employee:Employee <- employees.values) {
         var hours = workingHours
-
+        // there probably is a better way to do this
         try {
           for (vehicle: Vehicle <- employeeVehicleMap(employee.id)) hours -= vehicle.getHoursToFix
         } catch {
           // happens.. the employee is yet to have any work
           case e: NoSuchElementException => //println("not a problem..")
         }
-
         while (employee.bookedHours <= workingHours) {
-
           val vehicle = vehicleQueue.dequeue()
           employee.bookedHours += vehicle.getHoursToFix
           if (employeeVehicleMap.contains(employee.id)) {
             employeeVehicleMap(employee.id) += vehicle
           } else {
-            var lb  = new Queue[Vehicle]
-            lb += vehicle
-            employeeVehicleMap += (employee.id -> lb)
+            var q  = new Queue[Vehicle]
+            q += vehicle
+            employeeVehicleMap += (employee.id -> q)
           }
-          removeVehicle(vehicle) // TODO we have some duplication try to remove the original vehicle map
         }
-
       }
     }
 
-    // look at queue
+    // puts vehicles into a work queue for the garage
     private def queueVehicles(): Unit = {
       var capacity = getDailyCapacity
-      // check vehicles already in the garage
-      for (vehicle: Vehicle <- vehicleMap.values) capacity -= vehicle.getHoursToFix
-      // add vehicles until we have used all of our capacity
       while (capacity > 0) {
-        val vehicle = Vehicle.BrokenVehicleQueue.next()
+        val vehicle = Vehicle.BrokenVehicleFactory.next()
         vehicle.breakParts()
-        addVehicle(vehicle)
         vehicleQueue.+=:(vehicle)
-        removeVehicle(vehicle)
         capacity -= vehicle.getHoursToFix
       }
     }
@@ -94,12 +85,11 @@
       open = false
       openingDay += 1
       fixVehicles()
-
     }
 
 
-
-    def fixVehicles(): Unit = {
+    // TODO split this out into smaller functions
+    private def fixVehicles(): Unit = {
       // for each employee get their work queue
       var dayTotal: Double = 0
       for (employee: Employee <- employees.values) {
@@ -112,8 +102,7 @@
             hours -= vehicle.getHoursToFix
             fixVehicle(vehicle)
             employee.bookedHours -= vehicle.getHoursToFix
-//            val fixTime = this.getTime((workingHours - hours.floor).toInt, (((workingHours - hours) * 60) % 60).toInt)
-            val fixTime = this.getTime((vehicle.getHoursToFix.floor).toInt, (((vehicle.getHoursToFix) * 60) % 60).toInt)
+            val fixTime = this.getTime((workingHours - hours.ceil).toInt, (((workingHours - hours) * 60) % 60).toInt)
             val partsTotal = vehicle.getCostOfPartsToFix
             val labourTotal = labourCost(vehicle.getHoursToFix)
             val total = partsTotal + labourTotal
@@ -142,46 +131,46 @@
 
     }
 
-    def labourCost(hours: Double): Double = {
+    private def labourCost(hours: Double): Double = {
       hours * labourRate
     }
 
     def addEmployee(employee: Employee): Unit = {
+      if (!this.open)  throw new RuntimeException("can't add employees while the garage is open dude!")
       employees += (employee.id -> employee)
     }
 
     def removeEmployee(employee: Employee): Unit = {
       employees -= employee.id
+      reassignWork(employee)
     }
 
-    def addVehicle(vehicle: Vehicle): Unit = {
-      vehicleMap += (vehicle.registration -> vehicle)
+    private def reassignWork(employee: Employee): Unit = {
+      vehicleQueue ++= employeeVehicleMap(employee.id)
     }
 
-    def removeVehicle(vehicle: Vehicle): Unit = {
-      vehicleMap -= vehicle.registration
-    }
+    // TODO these became redundant when I removed the original map, I should probably reimplement and then tidy
+//    def addVehicle(vehicle: Vehicle): Unit = {
+//      vehicleMap += (vehicle.registration -> vehicle)
+//    }
+//
+//    def removeVehicle(vehicle: Vehicle): Unit = {
+//      vehicleMap -= vehicle.registration
+//    }
+//
+//    def removeVehiclesByType(c: Vehicle): Unit = {
+//      vehicleMap.retain((k, v) => v.getClass != c.getClass)
+//    }
 
-    def removeVehiclesByType(c: Vehicle): Unit = {
-      vehicleMap.retain((k, v) => v.getClass != c.getClass)
-    }
-
-    def fixVehicle(vehicle: Vehicle): Unit = {
-      //println(s"vehicle in fixvehicle is $vehicle")
+    // TODO check if this has beceom redundant
+    private def fixVehicle(vehicle: Vehicle): Unit = {
       vehicle.working = true
-      removeVehicle(vehicle)
-      //fixedVehicleQueue += vehicle
     }
 
     def getContents(): Unit = { // TODO change the return type to String
-      println("Garage queue: ")
-      vehicleMap.values.foreach(item  => println(s"  ${item.toString} hours to fix: ${item.getHoursToFix}"))
-
       for (employeeId:String <- employeeVehicleMap.keys) {
         println(s"Assigned to $employeeId:")
         employeeVehicleMap(employeeId).toList.foreach(item => println(s"  ${item.toString} hours to fix: ${item.getHoursToFix}"))
       }
     }
-
-
   }
