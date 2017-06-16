@@ -11,8 +11,6 @@
   class Garage(employees: scala.collection.mutable.Map[String, Employee]) {
 
     var vehicleQueue: Queue[Vehicle] = new Queue[Vehicle]()
-
-
     var employeeVehicleMap: Map[String, Queue[Vehicle]] = Map[String, Queue[Vehicle]]().empty
 
     var open: Boolean = false
@@ -20,10 +18,26 @@
     val labourRate: Double = 25
     var openingDay: Int = 0
     val openingHour: Int = 8
-
-
-
     val fistDay: java.util.Date = Calendar.getInstance.getTime
+
+    def openGarage(): Unit = {
+      open = true
+      queueVehicles()
+      assignWork()
+    }
+
+    def closeGarage(): Unit = {
+      open = false
+      openingDay += 1
+      fixVehicles()
+    }
+
+    def getContents(): Unit = { // TODO change the return type to String
+      for (employeeId:String <- employeeVehicleMap.keys) {
+        println(s"Assigned to $employeeId:")
+        employeeVehicleMap(employeeId).toList.foreach(item => println(s"  ${item.toString} hours to fix: ${item.getHoursToFix}"))
+      }
+    }
 
     private def getTime(hour: Int, minute: Int): java.util.Date = {
       val cal: Calendar = Calendar.getInstance()
@@ -34,22 +48,14 @@
       cal.getTime
     }
 
-    def openGarage(): Unit = {
-      open = true
-      queueVehicles()
-      assignWork()
-    }
 
-    // takes vehicles off the garage queue and gives them to an employee assuming they have enough hours free
     private def assignWork(): Unit = {
       for (employee:Employee <- employees.values) {
         var hours = workingHours
-        // there probably is a better way to do this
         try {
           for (vehicle: Vehicle <- employeeVehicleMap(employee.id)) hours -= vehicle.getHoursToFix
         } catch {
-          // happens.. the employee is yet to have any work
-          case e: NoSuchElementException => //println("not a problem..")
+          case e: NoSuchElementException =>
         }
         while (employee.bookedHours <= workingHours) {
           val vehicle = vehicleQueue.dequeue()
@@ -65,7 +71,6 @@
       }
     }
 
-    // puts vehicles into a work queue for the garage
     private def queueVehicles(): Unit = {
       var capacity = getDailyCapacity
       while (capacity > 0) {
@@ -77,15 +82,9 @@
     }
 
     private def getDailyCapacity:Double = {
-      // this is a hack, our queue ran out so now we always queue 2 days worth of work
       (workingHours*2) * employees.values.size
     }
 
-    def closeGarage(): Unit = {
-      open = false
-      openingDay += 1
-      fixVehicles()
-    }
 
 
     // TODO split this out into smaller functions
@@ -135,11 +134,13 @@
       hours * labourRate
     }
 
+    @deprecated
     def addEmployee(employee: Employee): Unit = {
       if (!this.open)  throw new RuntimeException("can't add employees while the garage is open dude!")
       employees += (employee.id -> employee)
     }
 
+    @deprecated
     def removeEmployee(employee: Employee): Unit = {
       employees -= employee.id
       reassignWork(employee)
@@ -149,28 +150,9 @@
       vehicleQueue ++= employeeVehicleMap(employee.id)
     }
 
-    // TODO these became redundant when I removed the original map, I should probably reimplement and then tidy
-//    def addVehicle(vehicle: Vehicle): Unit = {
-//      vehicleMap += (vehicle.registration -> vehicle)
-//    }
-//
-//    def removeVehicle(vehicle: Vehicle): Unit = {
-//      vehicleMap -= vehicle.registration
-//    }
-//
-//    def removeVehiclesByType(c: Vehicle): Unit = {
-//      vehicleMap.retain((k, v) => v.getClass != c.getClass)
-//    }
-
-    // TODO check if this has beceom redundant
     private def fixVehicle(vehicle: Vehicle): Unit = {
       vehicle.working = true
     }
 
-    def getContents(): Unit = { // TODO change the return type to String
-      for (employeeId:String <- employeeVehicleMap.keys) {
-        println(s"Assigned to $employeeId:")
-        employeeVehicleMap(employeeId).toList.foreach(item => println(s"  ${item.toString} hours to fix: ${item.getHoursToFix}"))
-      }
-    }
+
   }
